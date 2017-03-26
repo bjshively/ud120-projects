@@ -20,11 +20,44 @@ from email_preprocess import preprocess
 features_train, features_test, labels_train, labels_test = preprocess()
 
 
-
-
 #########################################################
 ### your code goes here ###
 
 #########################################################
+from sklearn import svm
 
+##########################################
+# Experiment with optimizing C value
+# Higher C = more complex decision boundary
+##########################################
+clf = svm.SVC(kernel='rbf', C=10000.) # .892
+# clf = svm.SVC(kernel='rbf', C=1000.) # .821
+# clf = svm.SVC(kernel='rbf', C=100.) # .616
+# clf = svm.SVC(kernel='rbf', C=10.) # .616
+# clf = svm.SVC(kernel='rbf')
 
+# Linear is less complex but may be less accurate
+# clf = svm.SVC(kernel='linear')
+
+##########################################
+# Shrink data set for faster training
+##########################################
+# features_train = features_train[:len(features_train)/100] 
+# labels_train = labels_train[:len(labels_train)/100] 
+
+# Train classifier
+t0 = time()
+clf.fit(features_train, labels_train)
+print "training time:", round(time()-t0, 3), "s"
+
+# Generate predictions
+t0 = time()
+pred = clf.predict(features_test)
+print "prediction time:", round(time()-t0, 3), "s"
+
+# Calculate and print accuracy
+from sklearn.metrics import accuracy_score
+print accuracy_score(pred, labels_test)
+
+# Chris = 1, print sum to determine how many events are attributed to Chris
+print sum(pred)
